@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,28 +11,32 @@ const Movies = () => {
   const [trailer, setTrailer] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
 
+
   const handleclick = () => setShowPlayer(true);
   const handleClose = () => setShowPlayer(false);
 
   useEffect(() => {
+    setMovie(null);
+    setTrailer(null);
     const fetchDetails = async () => {
       try {
         const movie = await getMediaById(id, type);
         setMovie(movie.data);
 
         const movieTrailer = await getMediaTrailer(id, type);
-        
 
-        const youtubeTrailer = movieTrailer.data.results.find(
+        const youtubeTrailer = movieTrailer?.data?.results?.find(
           (vid) => vid.site === "YouTube" && vid.type === "Trailer"
         );
+       
+                
         setTrailer(youtubeTrailer);
       } catch (error) {
         console.error("Failed to fetch movie details", error);
       }
     };
     fetchDetails();
-  }, [id]);
+  }, [id, type]);
 
   if (!movie) return <p className="text-white text-center mt-10">Loading...</p>;
 

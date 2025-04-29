@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [token, setToken] = useState(null);
-  console.log(userinfo);
+  
 
   useEffect(() => {
     const checkAuthStatus = () => {
