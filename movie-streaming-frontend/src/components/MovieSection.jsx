@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-useNavigate;
 
 const MovieSection = ({ title, movies }) => {
   const navigate = useNavigate();
@@ -13,7 +12,13 @@ const MovieSection = ({ title, movies }) => {
           <div
             key={movie.id}
             className="min-w-[160px]"
-            onClick={() => navigate(`/movie/${movie.id}`)}
+            onClick={() =>
+              navigate(
+                movie.media_type
+                  ? `/movie/${movie.id}/${movie.media_type}`
+                  : `/movie/${movie.id}`
+              )
+            }
           >
             <img
               src={movie.poster}

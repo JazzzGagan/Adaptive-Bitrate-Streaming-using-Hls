@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/Contexts";
 
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -21,6 +22,7 @@ export default function LoginForm() {
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
   const [rememberme, setRememberme] = useState(true);
+  const { setIsAuthenticated, setToken } = useContext(AuthContext);
 
   const handleRemember = (e) => {
     setRememberme(e.target.checked);
@@ -30,26 +32,27 @@ export default function LoginForm() {
     try {
       const res = await axios.post(
         "http://localhost:5000/login",
-        {
-          ...data,
-        },
-        {
-          withCredentials: true,
-        }
+        { ...data },
+        { withCredentials: true }
       );
+
       const token = res.data.access_token;
 
       if (rememberme) {
         localStorage.setItem("token", token);
       } else {
-        sessionStorage.setItem("sessiontoken", token);
+        sessionStorage.setItem("token", token);
       }
 
       setServerMessage(res.data.message);
       setServerError("");
+
+      setToken(res.data.access_token);
+      setIsAuthenticated(true);
+
       setTimeout(() => {
         navigate("/home");
-      }, 1000);
+      }, 800);
     } catch (err) {
       if (err.response) {
         setServerError(err.response.data.error || "Login failed.");
@@ -59,7 +62,6 @@ export default function LoginForm() {
       setServerMessage("");
     }
   };
-
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
@@ -128,7 +130,11 @@ export default function LoginForm() {
           </button>
         </form>
 
-        <p className="text-gray-300 text-sm mt-6 text-center">
+        <p className="text-gray-300 flex flex-col text-sm mt-6 text-center">
+          <Link to="/forgot-password">
+            Forgot Password?
+            <br />
+          </Link>
           Don't have an account?{" "}
           <Link to="/signup">
             <span className="text-white hover:underline cursor-pointer">

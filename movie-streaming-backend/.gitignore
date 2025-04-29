@@ -1,20 +1,30 @@
-# Python
-*.pyc
-*.pyo
-*.pyd
+# macOS system files
+.DS_Store
+
+# Python cache
 __pycache__/
+*.py[cod]
+
+# Environment variables
+.env
+
+# MinIO system folders
+minio.sys/
+minio-py/
+staet/
+start/
+
+
+# Virtual environments
 env/
 venv/
-*.env
 
-# Flask-related
-instance/
-.pytest_cache/
-
-# VS Code or other IDE folders
+# VSCode settings (optional)
 .vscode/
 
-# Logs
-*.log
+# Media and build folders
+videos/
+static/
 
-minio-py/
+# Template cache
+templates/__pycache__/

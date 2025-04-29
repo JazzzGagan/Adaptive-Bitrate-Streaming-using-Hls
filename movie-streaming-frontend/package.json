@@ -24,6 +24,7 @@
     "react-hook-form": "^7.55.0",
     "react-router-dom": "^7.5.0",
     "video.js": "^8.22.0",
+    "videojs-hls-quality-selector": "^2.0.0",
     "yup": "^1.6.1"
   },
   "devDependencies": {

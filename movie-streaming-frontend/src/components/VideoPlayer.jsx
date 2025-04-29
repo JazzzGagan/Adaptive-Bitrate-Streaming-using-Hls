@@ -1,21 +1,37 @@
-// components/VideoPlayer.jsx
-import React, { useEffect, useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
+import "videojs-hls-quality-selector";
 
 const VideoPlayer = ({ options }) => {
   const videoRef = useRef(null);
   const playerRef = useRef(null);
 
   useEffect(() => {
-    if (videoRef.current && !playerRef.current) {
-      const player = videojs(videoRef.current, options, () => {
-        console.log("Video.js player ready");
+    let frameId;
+
+    if (!playerRef.current) {
+      frameId = requestAnimationFrame(() => {
+        if (videoRef.current) {
+          const player = videojs(videoRef.current, options, () => {
+            console.log("Video.js player ready");
+
+            if (typeof player.hlsQualitySelector === "function") {
+              player.hlsQualitySelector({
+                displayCurrentQuality: true,
+              });
+            } else {
+              console.warn("hlsQualitySelector plugin not found");
+            }
+          });
+
+          playerRef.current = player;
+        }
       });
-      playerRef.current = player;
     }
 
     return () => {
+      cancelAnimationFrame(frameId);
       if (playerRef.current) {
         playerRef.current.dispose();
         playerRef.current = null;
@@ -25,7 +41,12 @@ const VideoPlayer = ({ options }) => {
 
   return (
     <div data-vjs-player>
-      <video ref={videoRef} className="video-js vjs-big-play-centered" />
+      <video
+        ref={videoRef}
+        className="video-js vjs-big-play-centered w-full h-full"
+        controls
+        preload="auto"
+      />
     </div>
   );
 };

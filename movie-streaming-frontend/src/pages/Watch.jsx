@@ -1,24 +1,32 @@
-// pages/Watch.jsx
 import React from "react";
 import VideoPlayer from "../components/VideoPlayer";
 
-const Watch = () => {
+const Watch = ({ title }) => {
+  
+
   const videoJsOptions = {
     autoplay: true,
     controls: true,
     responsive: true,
     fluid: true,
+    techOrder: ["html5"],
+    html5: {
+      hls: {
+        overrideNative: true, // Required!
+      },
+      nativeAudioTracks: false,
+      nativeVideoTracks: false,
+    },
     sources: [
       {
-        src: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", // Replace with your HLS URL
+        src: `http://192.168.101.3:9000/moviebox/${title}/master.m3u8`,
         type: "application/x-mpegURL",
       },
     ],
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Now Playing</h2>
+    <div className="w-full h-full z-[1000] relative">
       <VideoPlayer options={videoJsOptions} />
     </div>
   );

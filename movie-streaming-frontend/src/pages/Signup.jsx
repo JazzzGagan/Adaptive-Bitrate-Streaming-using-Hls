@@ -7,10 +7,20 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 const schema = yup.object().shape({
   username: yup.string().required("Username is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
+  email: yup
+    .string()
+    .trim()
+    .lowercase()
+    .email("Invalid email format")
+    .required("Email is required")
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address")
+    .max(254, "Email must be 254 characters or less"),
+
   password: yup
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(8, "Password must be at least 8 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
     .required("Password is required"),
 });
 
