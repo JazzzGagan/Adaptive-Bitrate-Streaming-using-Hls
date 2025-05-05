@@ -1,21 +1,42 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/Contexts";
 import sipderman from ".././assets/spiderman.webp";
 import minion from ".././assets/minion.jpg";
 import mandolarian from ".././assets/mandalorain.jpeg";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 
 const images = [sipderman, minion, mandolarian];
 const schema = yup.object().shape({
-  email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required"),
-});
+  username: yup.string().required("Username is required"),
+  email: yup
+    .string()
+    .trim()
+    .lowercase()
+    .email("Invalid email format")
+    .required("Email is required")
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address")
+    .max(254, "Email must be 254 characters or less"),
 
-export default function LoginFrom() {
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]/, "Password must contain at least one number")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm Password is required"),
+  dob: yup
+    .date()
+    .transform((value, originalValue) => (originalValue === "" ? null : value))
+    .required("Date of birth is required")
+    .typeError("Date of birth is required"),
+});
+export default function SignupForm() {
   const {
     register,
     handleSubmit,
@@ -25,41 +46,18 @@ export default function LoginFrom() {
   const [serverMessage, setServerMessage] = useState("");
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
-  const [rememberme, setRememberme] = useState(true);
-  const { setIsAuthenticated, setToken } = useContext(AuthContext);
-
-  const handleRemember = (e) => {
-    setRememberme(e.target.checked);
-  };
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post(
-        " http://192.168.101.2:5000/login",
-        { ...data },
-        { withCredentials: true }
-      );
-
-      const token = res.data.access_token;
-
-      if (rememberme) {
-        localStorage.setItem("token", token);
-      } else {
-        sessionStorage.setItem("token", token);
-      }
-
+      const res = await axios.post("http://localhost:5000/signup", data);
       setServerMessage(res.data.message);
       setServerError("");
-
-      setToken(res.data.access_token);
-      setIsAuthenticated(true);
-
       setTimeout(() => {
-        navigate("/home");
-      }, 800);
+        navigate("/login");
+      }, 1000);
     } catch (err) {
       if (err.response) {
-        setServerError(err.response.data.error || "Login failed.");
+        setServerError(err.response.data.error || "Signup failed.");
       } else {
         setServerError("Server not responding.");
       }
@@ -73,7 +71,7 @@ export default function LoginFrom() {
         <div className="w-4/5 h-2/3 sm:h-4/5 flex flex-col items-center justify-center space-y-4 ">
           <div className="w-4/5 h-auto flex flex-col ">
             <h1 className="text-5xl  font-bold text-white font-helvetica">
-              LOGIN <span className="inline-block">🍿</span>
+              SIGN UP <span className="inline-block">🍿</span>
             </h1>
           </div>
 
@@ -85,6 +83,20 @@ export default function LoginFrom() {
           )}
           <div className="w-4/5 h-2/3 flex flex-col">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  placeholder="Username"
+                  {...register("username")}
+                  className="w-full p-3 rounded bg-white bg-opacity-10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00acc1] border border-white border-opacity-20"
+                />
+                {errors.username && (
+                  <p className="text-red-300 text-sm mt-1">
+                    {errors.username.message}
+                  </p>
+                )}
+              </div>
+
               <div>
                 <input
                   type="email"
@@ -112,38 +124,46 @@ export default function LoginFrom() {
                   </p>
                 )}
               </div>
-
-              <div className="flex items-center">
-                {/* Remove register for the checkbox, manage it manually */}
+              <div>
                 <input
-                  type="checkbox"
-                  id="rememberMe"
-                  checked={rememberme}
-                  onChange={handleRemember}
-                  className="mr-2"
+                  type="password"
+                  placeholder="Confirm Password"
+                  {...register("confirmPassword")}
+                  className="w-full p-3 rounded bg-white bg-opacity-10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00acc1] border border-white border-opacity-20"
                 />
-                <label htmlFor="rememberMe" className="text-gray-300 text-sm">
-                  Remember Me
-                </label>
+                {errors.confirmPassword && (
+                  <p className="text-red-300 text-sm mt-1">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="date"
+                  placeholder="Date of Birth"
+                  {...register("dob")}
+                  className="w-full p-3 rounded bg-white bg-opacity-10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00acc1] border border-white border-opacity-20"
+                />
+                {errors.dob && (
+                  <p className="text-red-300 text-sm mt-1">
+                    {errors.dob.message}
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
                 className="w-full bg-[#00acc1] hover:bg-cyan-600 text-white font-semibold py-3 rounded"
               >
-                Login
+                Sign Up
               </button>
             </form>
 
-            <p className="text-gray-300 flex flex-col text-sm mt-6 text-center">
-              <Link to="/forgot-password">
-                Forgot Password?
-                <br />
-              </Link>
-              Don't have an account?{" "}
-              <Link to="/signup">
+            <p className="text-gray-300 text-sm mt-6 text-center">
+              Already have an account?{" "}
+              <Link to="/login">
                 <span className="text-white hover:underline cursor-pointer">
-                  Sign up
+                  Sign in
                 </span>
               </Link>
             </p>

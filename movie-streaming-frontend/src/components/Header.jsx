@@ -29,16 +29,16 @@ const Header = () => {
   };
 
   return (
-    <div className="w-full h-16 bg-black text-white flex items-center justify-between px-6 shadow-md relative">
+    <div className="w-full h-28 sm:h-1/2  text-white  space-y-4  sm:flex items-center justify-between sm:px-8 shadow-md relative">
       {/* Logo Section */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center sm:space-x-2">
         <div className="text-yellow-50 font-bold text-xl">cinephile</div>
         <span className="bg-background2 text-black px-2 rounded text-sm">
           PRO
         </span>
       </div>
 
-      <ul className="flex items-center space-x-20 text-lg font-medium">
+      <ul className="flex items-center space-x-6   sm:space-x-20 text-lg font-medium ">
         {NavData.map((navdata) => (
           <li key={navdata.id}>
             <Link
@@ -63,8 +63,8 @@ const Header = () => {
         <div className="border-l w-40 pl-8 relative">
           <FontAwesomeIcon icon={faUser} onClick={toggleUserProfile} />
           <div className="text-white text-sm font-semibold">
-                  {userinfo?.username || "Username"}
-                </div>
+            {userinfo?.username || "Username"}
+          </div>
 
           {userProfileOpen && (
             <div className="absolute right-0  mt-4 w-64 bg-black bg-opacity-95 rounded-2xl shadow-2xl border border-white border-opacity-10 z-50">

@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [token, setToken] = useState(null);
-  
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -27,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
     axios
-      .get("http://localhost:5000/home", {
+      .get("http://192.168.101.2:5000/home", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -60,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         isAuthenticated,
         setIsAuthenticated,
-        setToken
+        setToken,
       }}
     >
       {children}

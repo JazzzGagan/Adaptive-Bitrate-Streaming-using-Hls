@@ -1,8 +1,5 @@
-import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import LandingPage from "./pages/LandingPage";
 import PrivateRoutes from "./Routes/PrivateRoutes";
 import React from "react";
@@ -11,14 +8,15 @@ import TvShows from "./pages/TvShows";
 import Movies from "./pages/Movies";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-
+import SignupForm from "./pages/Signup";
+import LoginFrom from "./pages/Login";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<LoginFrom />} />
+      <Route path="/signup" element={<SignupForm />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
 

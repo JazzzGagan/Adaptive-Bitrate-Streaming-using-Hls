@@ -11,6 +11,7 @@ const Movies = () => {
   const [trailer, setTrailer] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
 
+  console.log(movie);
 
   const handleclick = () => setShowPlayer(true);
   const handleClose = () => setShowPlayer(false);
@@ -28,8 +29,7 @@ const Movies = () => {
         const youtubeTrailer = movieTrailer?.data?.results?.find(
           (vid) => vid.site === "YouTube" && vid.type === "Trailer"
         );
-       
-                
+
         setTrailer(youtubeTrailer);
       } catch (error) {
         console.error("Failed to fetch movie details", error);
@@ -64,9 +64,9 @@ const Movies = () => {
 
         <div className="flex-1 mt-4 md:mt-0">
           <h1 className="text-3xl md:text-5xl font-bold mb-2">
-            {movie?.title?.replace(/\*/g, "")}{" "}
+            {(movie?.title || movie.name)?.replace(/\*/g, "")}{" "}
             <span className="text-gray-400 text-xl">
-              ({movie.release_date?.split("-")[0]})
+              ({(movie.release_date || movie.first_air_date)?.split("-")[0]})
             </span>
           </h1>
 

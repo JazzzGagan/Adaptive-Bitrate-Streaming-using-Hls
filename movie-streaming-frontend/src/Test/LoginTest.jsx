@@ -15,7 +15,7 @@ const schema = yup.object().shape({
   password: yup.string().required("Password is required"),
 });
 
-export default function LoginFrom() {
+export default function LoginTest() {
   const {
     register,
     handleSubmit,
@@ -35,7 +35,7 @@ export default function LoginFrom() {
   const onSubmit = async (data) => {
     try {
       const res = await axios.post(
-        " http://192.168.101.2:5000/login",
+        "http://localhost:5000/login",
         { ...data },
         { withCredentials: true }
       );

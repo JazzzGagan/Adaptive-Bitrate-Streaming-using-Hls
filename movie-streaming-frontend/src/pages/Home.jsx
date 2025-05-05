@@ -29,7 +29,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-black min-h-screen my-0">
+    <div className="w-[90%] mx-auto bg-black flex-grow-5 min-h-screen space-y-8 py-6">
       <MovieSection
         title="Today's Hot Movies"
         movies={hotMovies.map((movie) => ({
