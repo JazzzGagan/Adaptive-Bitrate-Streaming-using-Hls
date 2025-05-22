@@ -10,6 +10,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import SignupForm from "./pages/Signup";
 import LoginFrom from "./pages/Login";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/tvshows" element={<TvShows />} />
           <Route path="/movie/:id/:type" element={<Movies />} />
           <Route path="/movie/:id" element={<Movies />} />
+          <Route path="/search" element={<Search />} />
         </Route>
       </Route>
     </Routes>

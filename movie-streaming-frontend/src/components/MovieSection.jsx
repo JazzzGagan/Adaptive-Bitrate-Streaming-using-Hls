@@ -9,8 +9,8 @@ const MovieSection = ({ title, movies }) => {
   const settings = {
     dots: true,
     speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 5,
+    slidesToShow: Math.min(movies.length, 4),
+    slidesToScroll: Math.min(movies.length, 4),
     infinite: true,
     autoplay: false,
     autoplaySpeed: 1000,
@@ -37,7 +37,9 @@ const MovieSection = ({ title, movies }) => {
               alt={movie.title}
               className="rounded-md w-[239px] h-4/5  object-cover shadow-md hover:scale-105 transition-transform"
             />
-            <p className="text-sm text-center mt-2 text-white">{movie.title}</p>
+            <p className="text-sm  w-[239px] text-center mt-2  text-white">
+              {movie.title}
+            </p>
           </div>
         ))}
       </Slider>

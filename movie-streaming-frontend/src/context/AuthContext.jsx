@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./Contexts";
 import axios from "axios";
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
     axios
-      .get("http://192.168.101.2:5000/home", {
+      .get("http://127.0.0.1:5000/home", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

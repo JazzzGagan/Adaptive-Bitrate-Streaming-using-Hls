@@ -1,9 +1,7 @@
 import React from "react";
 import VideoPlayer from "../components/VideoPlayer";
 
-const Watch = ({ title }) => {
-  
-
+const Watch = () => {
   const videoJsOptions = {
     autoplay: true,
     controls: true,
@@ -11,15 +9,15 @@ const Watch = ({ title }) => {
     fluid: true,
     techOrder: ["html5"],
     html5: {
-      hls: {
-        overrideNative: true, // Required!
+      vhs: {
+        overrideNative: true,
       },
       nativeAudioTracks: false,
       nativeVideoTracks: false,
     },
     sources: [
       {
-        src: `http://192.168.101.3:9000/moviebox/${title}/master.m3u8`,
+        src: "http://172.16.3.135:9000/moviebox/Interstellar/master.m3u8",
         type: "application/x-mpegURL",
       },
     ],

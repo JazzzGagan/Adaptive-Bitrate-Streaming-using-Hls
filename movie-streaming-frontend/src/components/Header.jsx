@@ -9,27 +9,34 @@ import {
   faHeart,
   faSignOutAlt,
   faClock,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import historyicon from "../assets/icons/icon1.svg";
 import historyicon2 from "../assets/icons/icon2.svg";
 import { AuthContext } from "../context/Contexts";
+import Input from "./Input";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isopen, setIsopen] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const [userProfileOpen, setUserProfileOpen] = useState(false);
+
   const { userinfo, logout } = useContext(AuthContext);
+
 
   const toogleIcon = () => {
     setIsopen(!isopen);
   };
-
+  const handleSearchClick = () => {
+    setIsSearchActive(!isSearchActive);
+  };
   const toggleUserProfile = () => {
     setUserProfileOpen(!userProfileOpen);
   };
 
-  return (
-    <div className="w-full h-28 sm:h-1/2  text-white  space-y-4  sm:flex items-center justify-between sm:px-8 shadow-md relative">
+  return !isSearchActive ? (
+    <div className="w-full h-[8vh] sm:h-1/2  text-white  space-y-4  sm:flex items-center justify-between sm:px-8 shadow-md relative">
       {/* Logo Section */}
       <div className="flex items-center sm:space-x-2">
         <div className="text-yellow-50 font-bold text-xl">cinephile</div>
@@ -58,9 +65,10 @@ const Header = () => {
           alt="historyicon"
           className="size-9"
         />
-        <FontAwesomeIcon icon={faSearch} />
 
-        <div className="border-l w-40 pl-8 relative">
+        <FontAwesomeIcon icon={faSearch} onClick={handleSearchClick} />
+
+        <div className="border-l w-40 pl-8 cursor-pointer relative">
           <FontAwesomeIcon icon={faUser} onClick={toggleUserProfile} />
           <div className="text-white text-sm font-semibold">
             {userinfo?.username || "Username"}
@@ -107,6 +115,31 @@ const Header = () => {
               </div>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="w-full h-[8vh] flex items-center justify-center ">
+      <div className="w-[90%] h-[6vh] m-0 flex items-center justify-evenly ">
+        <div className=" w-[10%] h-[5vh] flex items-center sm:space-x-2 ">
+          <div className="text-yellow-50 font-bold text-xl">cinephile</div>
+          <span className="bg-background2 text-black px-2 rounded text-sm">
+            PRO
+          </span>
+        </div>
+        <div className="w-[90%] h-[5vh] flex items-center justify-center ">
+          <FontAwesomeIcon
+            className=" w-[10%] text-4xl cursor-pointer"
+            icon={faSearch}
+            onClick={handleSearchClick}
+          />
+          <Input />
+          <button onClick={handleSearchClick} className="w-[10%]">
+            <FontAwesomeIcon
+              icon={faTimes}
+              className="  text-4xl cursor-pointer"
+            />
+          </button>
         </div>
       </div>
     </div>

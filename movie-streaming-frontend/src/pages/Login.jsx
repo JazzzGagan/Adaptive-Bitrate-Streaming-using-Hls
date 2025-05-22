@@ -35,7 +35,7 @@ export default function LoginFrom() {
   const onSubmit = async (data) => {
     try {
       const res = await axios.post(
-        " http://192.168.101.2:5000/login",
+        "http://127.0.0.1:5000/login",
         { ...data },
         { withCredentials: true }
       );
@@ -92,6 +92,7 @@ export default function LoginFrom() {
                   {...register("email")}
                   className="w-full p-3 rounded bg-white bg-opacity-10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00acc1] border border-white border-opacity-20"
                 />
+
                 {errors.email && (
                   <p className="text-red-300 text-sm mt-1">
                     {errors.email.message}

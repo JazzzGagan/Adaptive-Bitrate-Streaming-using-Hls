@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import mimetypes
 import secrets
 import hashlib
+import send2trash
 
 
 load_dotenv()
@@ -18,7 +19,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # CORS Configuration - Supporting credentials and allowing specific origins
-CORS(app, supports_credentials=True, origins=["http://192.168.101.2:5173", "http://localhost:5173"])
+CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://172.16.3.135:5173"])
 
 # Flask Configurations
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -44,13 +45,16 @@ minio_client = Minio(
 
 if not minio_client.bucket_exists(MINIO_BUCKET_NAME):
     minio_client.make_bucket(MINIO_BUCKET_NAME)
-IGNORE_FILES = ['.DS_Store', 'sample.mp4']
+IGNORE_FILES = ['.DS_Store', 'Interstellar.mp4']
+import os
+import mimetypes
+
 def upload_folder_to_minio(localfolder, minioprefix):
     for foldername, subfolders, filenames in os.walk(localfolder):
         for file in filenames:
             localpath = os.path.join(foldername, file)
             relativepath = os.path.relpath(localpath, localfolder)
-            miniopath = os.path.join(minioprefix,relativepath).replace("\\","/")
+            miniopath = os.path.join(minioprefix, relativepath).replace("\\", "/")
 
             if file in IGNORE_FILES:
                 print(f"Skipping file: {file}")
@@ -62,12 +66,17 @@ def upload_folder_to_minio(localfolder, minioprefix):
 
             try:
                 minio_client.fput_object(MINIO_BUCKET_NAME, miniopath, localpath, content_type=content_type)
+                
+                # Permanently delete the file after successful upload``
+                os.remove(localpath)
+                print(f"Deleted local file: {localpath}")
+
             except Exception as e:
-                print(f"Error uploading {file} : {e}") 
+                print(f"Error uploading {file}: {e}")
+
 
 @app.route("/uploadfolder", methods=["POST"])
 def upload_video_folder():
-
     data = request.get_json()
     title = data.get('title')
     folder = data.get('folder')
@@ -78,7 +87,7 @@ def upload_video_folder():
     minio_path_prefix = f"{title}/"
     upload_folder_to_minio(folder, minio_path_prefix )
 
-    videoUrl = f"http://192.168.101.2:9000/{MINIO_BUCKET_NAME}/{title}/master.m3u8"
+    videoUrl = f"http://192.168.101.3:64176/{MINIO_BUCKET_NAME}/{title}/master.m3u8"
    
     
 
@@ -122,7 +131,7 @@ def login():
     user = db.users.find_one({"email": email})
     if user and check_password_hash(user['password'], password):
         user_id = str(user["_id"])
-        access_token = create_access_token(identity=user_id, expires_delta=timedelta(minutes=15))
+        access_token = create_access_token(identity=user_id, expires_delta=timedelta(days=30))
         return jsonify({"message": "Login Successful", 'access_token': access_token}), 200
     else:
         return jsonify({"error": "Invalid Credentials"}), 401
@@ -187,12 +196,17 @@ def resetPassword():
     except Exception as e:
         print(e)
         return jsonify({"message":"error occured"}), 400
+    
+
+
+
 
 # Protected Route (Requires JWT Authentication)
 @app.route('/home', methods=["GET"])
 @jwt_required()
 def protected():
     current_user = get_jwt_identity()
+   
     user = db.users.find_one({"_id": ObjectId(current_user)})
 
     if not user:
@@ -208,5 +222,5 @@ def protected():
 
 # Run the Flask Application
 if __name__ == "__main__":
-    app.run( host='0.0.0.0', port=5000, debug=True)
+    app.run( port=5000, debug=True)
  

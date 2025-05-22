@@ -3,15 +3,13 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Watch from "./Watch";
-import { getMediaById, getMediaTrailer } from "../api/movieServices";
+import { getMediaById, getMediaTrailer } from "../api/movieServices.js";
 
 const Movies = () => {
   const { id, type } = useParams();
   const [movie, setMovie] = useState(null);
   const [trailer, setTrailer] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
-
-  console.log(movie);
 
   const handleclick = () => setShowPlayer(true);
   const handleClose = () => setShowPlayer(false);
