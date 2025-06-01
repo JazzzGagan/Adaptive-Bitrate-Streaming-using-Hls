@@ -68,14 +68,14 @@ const Header = () => {
 
         <FontAwesomeIcon icon={faSearch} onClick={handleSearchClick} />
 
-        <div className="border-l w-40 pl-8 cursor-pointer relative">
+        <div className="border-l w-28   flex flex-col items-center justify-center cursor-pointer relative ">
           <FontAwesomeIcon icon={faUser} onClick={toggleUserProfile} />
           <div className="text-white text-sm font-semibold">
             {userinfo?.username || "Username"}
           </div>
 
           {userProfileOpen && (
-            <div className="absolute right-0  mt-4 w-64 bg-black bg-opacity-95 rounded-2xl shadow-2xl border border-white border-opacity-10 z-50">
+            <div className="absolute top-12 w-44 bg-black bg-opacity-95 rounded-2xl shadow-2xl border border-white border-opacity-10 z-50">
               <div className="flex flex-col items-center py-4 border-b border-white border-opacity-20">
                 <div className="w-16 h-16 rounded-full bg-gray-700 mb-2" />
                 <div className="text-white font-semibold">

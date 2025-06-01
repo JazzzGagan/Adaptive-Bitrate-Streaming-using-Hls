@@ -5,16 +5,19 @@ import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { SearchProvider } from "./context/SearchContext.jsx";
-import React from "react";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <SearchProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </SearchProvider>
+      <QueryClientProvider client={queryClient}>
+        <SearchProvider>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </SearchProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </StrictMode>
 );

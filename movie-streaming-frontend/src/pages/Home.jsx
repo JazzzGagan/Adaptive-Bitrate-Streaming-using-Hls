@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 
 import {
   fetchMovies,
@@ -7,32 +7,30 @@ import {
   fetchTrendingTVToday,
 } from "../api/tmdb";
 import MovieSection from "../components/MovieSection";
-import { SearchContext } from "../context/Contexts";
+import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
-  
+  const { data: hotMovies = [] } = useQuery({
+    queryKey: ["hotMovies"],
+    queryFn: fetchMovies,
+  });
 
-  const [hotMovies, setHotMovies] = useState([]);
-  const [popularMovies, setPopularMovies] = useState([]);
-  const [hotTvshows, setHotTvshows] = useState([]);
-  const [topRatedMovies, setTopRatedMovies] = useState([]);
+  const { data: popularMovies = [] } = useQuery({
+    queryKey: ["popularMovies"],
+    queryFn: fetchPopularMovies,
+  });
 
-  useEffect(() => {
-    const loadMovies = async () => {
-      const hotMovies = await fetchMovies();
-      const popularMovies = await fetchPopularMovies();
-      const hotTvShows = await fetchTrendingTVToday();
-      const topRatedMovies = await fetchTopRatedMovies();
+  const { data: hotTvShows = [] } = useQuery({
+    queryKey: ["hotTvShows"],
+    queryFn: fetchTrendingTVToday,
+  });
 
-      setHotMovies(hotMovies);
-      setPopularMovies(popularMovies);
-      setHotTvshows(hotTvShows);
-      setTopRatedMovies(topRatedMovies);
-    };
-    loadMovies();
-  }, []);
+  const { data: topRatedMovies = [] } = useQuery({
+    queryKey: ["topRatedMovies"],
+    queryFn: fetchTopRatedMovies,
+  });
 
-  return  (
+  return (
     <div className="w-[90%] mx-auto bg-black flex-grow-5 min-h-screen space-y-8 py-6">
       <MovieSection
         title="Today's Hot Movies"
@@ -54,7 +52,7 @@ const Home = () => {
       />
       <MovieSection
         title="Today's Hot TV Shows"
-        movies={hotTvshows.map((movie) => ({
+        movies={hotTvShows.map((movie) => ({
           id: movie.id,
           title: movie.name,
           media_type: movie.media_type,

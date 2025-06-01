@@ -20,3 +20,8 @@ export const searchByQuery = (query) =>
 
 export const movieDetail = (id) =>
   axios.get(`${baseUrl}/movie/${id}?api_key=${apiKey}`);
+
+export const getTvSeasonEpisodes = (tvId, seasonNumber) =>
+  axios.get(
+    `${baseUrl}/tv/${tvId}/season/${seasonNumber}?api_key=${apiKey}&language=en-US`
+  );

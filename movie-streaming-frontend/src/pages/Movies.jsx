@@ -1,40 +1,71 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlay,
+  faTimes,
+  faThumbsUp,
+  faThumbsDown,
+  faStar,
+} from "@fortawesome/free-solid-svg-icons";
+
 import Watch from "./Watch";
-import { getMediaById, getMediaTrailer } from "../api/movieServices.js";
+import {
+  getMediaById,
+  getMediaTrailer,
+  getTvSeasonEpisodes,
+} from "../api/movieServices.js";
 
 const Movies = () => {
   const { id, type } = useParams();
   const [movie, setMovie] = useState(null);
   const [trailer, setTrailer] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
-
-  const handleclick = () => setShowPlayer(true);
-  const handleClose = () => setShowPlayer(false);
+  const [expandedSeason, setExpandedSeason] = useState(1); // default to season 1
+  const [seasonEpisodes, setSeasonEpisodes] = useState({});
 
   useEffect(() => {
     setMovie(null);
     setTrailer(null);
+    setExpandedSeason(null);
+    setSeasonEpisodes({});
+
     const fetchDetails = async () => {
       try {
-        const movie = await getMediaById(id, type);
-        setMovie(movie.data);
+        const movieRes = await getMediaById(id, type);
+        setMovie(movieRes.data);
 
-        const movieTrailer = await getMediaTrailer(id, type);
-
-        const youtubeTrailer = movieTrailer?.data?.results?.find(
+        const trailerRes = await getMediaTrailer(id, type);
+        const youtubeTrailer = trailerRes?.data?.results?.find(
           (vid) => vid.site === "YouTube" && vid.type === "Trailer"
         );
-
         setTrailer(youtubeTrailer);
       } catch (error) {
         console.error("Failed to fetch movie details", error);
       }
     };
+
     fetchDetails();
   }, [id, type]);
+
+  const handleClick = () => setShowPlayer(true);
+  const handleClose = () => setShowPlayer(false);
+  useEffect(() => {
+    const fetchEpisodes = async () => {
+      if (!seasonEpisodes[expandedSeason]) {
+        try {
+          const res = await getTvSeasonEpisodes(id, expandedSeason);
+          setSeasonEpisodes((prev) => ({
+            ...prev,
+            [expandedSeason]: res.data.episodes,
+          }));
+        } catch (err) {
+          console.error("Failed to fetch episodes:", err);
+        }
+      }
+    };
+    if (type === "tv") fetchEpisodes();
+  }, [expandedSeason, id, seasonEpisodes, type]);
 
   if (!movie) return <p className="text-white text-center mt-10">Loading...</p>;
 
@@ -69,9 +100,11 @@ const Movies = () => {
           </h1>
 
           <div className="flex items-center text-sm text-gray-300 gap-4 mt-2">
-            <span>{movie.runtime} mins</span>
+            <span>{movie.runtime || movie.episode_run_time?.[0]} mins</span>
             <span className="uppercase">{movie.original_language}</span>
-            <span>{movie.vote_average} ⭐</span>
+            <span>
+              {movie.vote_average} <FontAwesomeIcon icon={faStar} />
+            </span>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2 text-sm">
@@ -89,12 +122,82 @@ const Movies = () => {
 
           <button
             className="mt-6 bg-background2 px-6 py-2 rounded-full text-white font-semibold shadow-lg flex items-center gap-2"
-            onClick={handleclick}
+            onClick={handleClick}
           >
             <FontAwesomeIcon icon={faPlay} /> Play
           </button>
         </div>
       </div>
+
+      {type === "tv" && movie?.seasons?.length > 0 && (
+        <div className="mt-10 px-4 md:px-8 max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold">
+              {expandedSeason
+                ? `Season ${expandedSeason}/${movie?.number_of_seasons}`
+                : "Select a season"}
+            </h2>
+            <select
+              value={expandedSeason || ""}
+              onChange={(e) => setExpandedSeason(Number(e.target.value))}
+              className="bg-white/10 text-white px-3 py-1 rounded"
+            >
+              <option value="" disabled>
+                Select Season
+              </option>
+              {movie?.seasons?.map((s) => (
+                <option key={s.id} value={s.season_number}>
+                  Season {s.season_number}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Episodes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {seasonEpisodes[expandedSeason]?.map((ep) => (
+              <div
+                key={ep.id}
+                className="bg-white/5 p-3 rounded-lg hover:bg-white/10 transition"
+              >
+                <div className="relative">
+                  <img
+                    src={`https://image.tmdb.org/t/p/w500${ep.still_path}`}
+                    alt={ep.name}
+                    className="rounded w-full h-40 object-cover mb-2"
+                  />
+                  <span className="absolute bottom-2 right-2 bg-black/60 text-white text-sm px-2 py-0.5 rounded">
+                    <FontAwesomeIcon icon={faStar} />{" "}
+                    {ep.vote_average?.toFixed(1) || "N/A"}
+                  </span>
+                </div>
+                <h3 className="text-md font-bold">
+                  S{ep.season_number}E{ep.episode_number} — {ep.name}
+                </h3>
+                <p className="text-sm text-gray-400 mt-1">
+                  {new Date(ep.air_date).toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}{" "}
+                  • {ep.runtime || "N/A"} minutes
+                </p>
+                <p className="text-sm text-gray-300 mt-2 line-clamp-3">
+                  {ep.overview || "No description available."}
+                </p>
+                <div className="mt-2 flex gap-4 text-gray-400 text-sm">
+                  <button className="hover:text-white">
+                    <FontAwesomeIcon icon={faThumbsUp} /> Like
+                  </button>
+                  <button className="hover:text-white">
+                    <FontAwesomeIcon icon={faThumbsDown} /> Dislike
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* TRAILER */}
       {trailer && (
@@ -112,7 +215,7 @@ const Movies = () => {
         </div>
       )}
 
-      {/* OVERLAY PLAYER */}
+      {/* PLAYER OVERLAY */}
       {showPlayer && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-[9999] flex items-center justify-center">
           <button
