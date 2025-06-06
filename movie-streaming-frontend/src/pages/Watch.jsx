@@ -2,22 +2,22 @@ import React from "react";
 import VideoPlayer from "../components/VideoPlayer";
 
 const Watch = () => {
-  const videoJsOptions = {
+  const initialOptions = {
     autoplay: true,
     controls: true,
-    responsive: true,
     fluid: true,
-    techOrder: ["html5"],
-    html5: {
-      vhs: {
-        overrideNative: true,
+    responsive: true,
+
+    controlBar: {
+      volumePanel: {
+        inline: false,
       },
-      nativeAudioTracks: false,
-      nativeVideoTracks: false,
     },
+  };
+  const videoJsOptions = {
     sources: [
       {
-        src: "http://172.16.3.135:9000/moviebox/Interstellar/master.m3u8",
+        src: "http://192.168.101.2:9000/moviebox/Daphe/master.m3u8",
         type: "application/x-mpegURL",
       },
     ],
@@ -25,7 +25,7 @@ const Watch = () => {
 
   return (
     <div className="w-full h-full z-[1000] relative">
-      <VideoPlayer options={videoJsOptions} />
+      <VideoPlayer options={videoJsOptions} initialOptions={initialOptions} />
     </div>
   );
 };
