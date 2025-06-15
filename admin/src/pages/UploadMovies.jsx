@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useState, useEffect } from 'react'
 import { FaCloudUploadAlt } from 'react-icons/fa'
-import toast, { Toaster } from 'react-hot-toast'
+import toast from 'react-hot-toast'
 import socket from '../socket'
 
 const Status = {

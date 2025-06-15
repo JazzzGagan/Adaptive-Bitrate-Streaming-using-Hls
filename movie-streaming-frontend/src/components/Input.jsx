@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { searchByQuery } from "../api/movieServices";
-import MovieSection from "./MovieSection";
+import MovieSection from "./MovieSlider";
 import { SearchContext } from "../context/Contexts";
 import { Link, useNavigate } from "react-router-dom";
 
-const Input = () => {
+const Input = ({ setIsSearchActive }) => {
   const [inputValue, setInputValue] = useState("");
 
   const [prevSearch, setPrevSearch] = useState(() => {
@@ -27,6 +27,7 @@ const Input = () => {
 
   const handleKeyPress = (e) => {
     if (e.key == "Enter") {
+      setIsSearchActive(false);
       const query = inputValue.trim().toLowerCase();
       if (!query) return;
 
@@ -46,9 +47,9 @@ const Input = () => {
       try {
         const response = await searchByQuery(query);
         setSearchResult(response.data.results);
-        console.log(response.data.results);
 
         setHasSearched(true);
+
         navigate("/search");
       } catch (error) {
         console.error("Error fetching data: ", error);

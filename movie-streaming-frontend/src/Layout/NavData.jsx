@@ -1,7 +1,7 @@
 const navData = [
   {
     id: 1,
-    title: "Featured",
+    title: "Home",
     path: "/home",
   },
   {

@@ -9,7 +9,7 @@ import {
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
 
-import Watch from "./Watch";
+import Watch from "./Watch.jsx";
 import {
   getMediaById,
   getMediaTrailer,
@@ -21,7 +21,7 @@ const Movies = () => {
   const [movie, setMovie] = useState(null);
   const [trailer, setTrailer] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
-  const [expandedSeason, setExpandedSeason] = useState(1); // default to season 1
+  const [expandedSeason, setExpandedSeason] = useState(1);
   const [seasonEpisodes, setSeasonEpisodes] = useState({});
 
   useEffect(() => {

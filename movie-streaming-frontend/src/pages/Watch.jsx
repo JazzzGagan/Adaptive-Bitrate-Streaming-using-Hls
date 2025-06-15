@@ -17,10 +17,11 @@ const Watch = () => {
   const videoJsOptions = {
     sources: [
       {
-        src: "http://192.168.101.2:9000/moviebox/Daphe/master.m3u8",
+        src: "http://127.0.0.1:9000/moviebox/Three Robots/master.m3u8",
         type: "application/x-mpegURL",
       },
     ],
+   
   };
 
   return (

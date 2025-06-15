@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { SearchContext } from "../context/Contexts";
-import MovieSection from "../components/MovieSection";
+import MovieSection from "../components/MovieSlider";
 
 const Search = () => {
   const { searchResult, hasSearched } = useContext(SearchContext);

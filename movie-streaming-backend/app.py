@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime, timedelta, timezone
 from bson import ObjectId
+from bson.errors import InvalidId
 import os
 from minio import Minio
 from dotenv import load_dotenv
@@ -25,18 +26,18 @@ load_dotenv()
 app = Flask(__name__)
 
 CORS(app, supports_credentials=True, origins=[
-    "http://localhost:5175",
     "http://127.0.0.1:5173",
-    "http://172.16.3.135:5173"
+    "http://localhost:5175",
+    "http://192.168.101.4:5175"
 ])
 
 socketio = SocketIO(
     app,
     async_mode='eventlet',
     cors_allowed_origins=[
-        "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "http://172.16.3.135:5173"
+        "http://localhost:5175",
+        "http://192.168.101.4:5175"
     ]
 )
 
@@ -243,10 +244,12 @@ def convert_video():
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
+    print(data)
     username = data['username']
     email = data['email']
     password = data['password']
     dob = data['dob']
+    avatar = data['avatar']
 
     
 
@@ -256,7 +259,7 @@ def signup():
 
     hash_password = generate_password_hash(password)
 
-    db.users.insert_one({"username": username, "email": email, "password": hash_password, "dob": dob} )
+    db.users.insert_one({"username": username, "avatar": avatar, "email": email, "password": hash_password, "dob": dob} )
 
     return jsonify({"message": "Signup Successful"}), 201
 
@@ -372,8 +375,55 @@ def resetPassword():
         return jsonify({"message":"error occured"}), 400
     
 
+@app.route('/updateprofile' , methods=["PUT"])
+def updateProfile():
+    data = request.get_json()
+    
+    userId = data["userId"]
+    avatar = data['selectedAvatar']
+    try:
+        obj_id = ObjectId(userId)
+        user = db.users.find_one({"_id": obj_id})
+    except InvalidId:
+        return jsonify({"message": "Invalid user ID"}), 400
+
+    
+    
+    db.users.update_one({"_id": obj_id}, {"$set": {"avatar": avatar}})
 
 
+    updated_user = db.users.find_one({"_id": obj_id})
+
+    return jsonify({
+        "username": updated_user.get("username"),
+        "user_id": str(updated_user["_id"]),
+        "email": updated_user.get("email"),
+        "avatar": updated_user.get("avatar"),
+        "message": "Profile updated successfully"
+    })
+   
+@app.route('/updateusername', methods=["PUT"])
+def updateUsername():
+    data = request.get_json()
+    username = data['username']
+    userId = data["userId"]
+
+    try:
+        obj_id  = ObjectId(userId)
+        user = db.users.find_one({"_id": obj_id})
+    except InvalidId:
+        return jsonify({"message": "Invalid object id"}), 400
+    
+    db.users.update_one({"_id": obj_id}, {"$set" : {"username": username}})
+    updated_user = db.users.find_one({"_id": obj_id})
+
+    return jsonify({
+        "username": updated_user.get("username"),
+        "user_id": str(updated_user["_id"]),
+        "email": updated_user.get("email"),
+        "avatar": updated_user.get("avatar"),
+        "message": "Username updated successfully"
+    }), 200
 
 # Protected Route (Requires JWT Authentication)
 @app.route('/home', methods=["GET"])
@@ -389,7 +439,8 @@ def protected():
     return jsonify({
         "username": user.get('username'),
         "user_id": str(user["_id"]),
-        "email": user.get("email")
+        "email": user.get("email"),
+        "avatar": user.get("avatar")
     })
 
 

@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [token, setToken] = useState(null);
 
+
   useEffect(() => {
     const checkAuthStatus = () => {
       const token =
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
       .get("http://127.0.0.1:5000/home", {
         headers: {
           Authorization: `Bearer ${token}`,
+          Accept: "application/json",
         },
       })
       .then((response) => {
@@ -60,6 +62,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         setIsAuthenticated,
         setToken,
+        setUserinfo,
       }}
     >
       {children}

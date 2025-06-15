@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import { SearchProvider } from "./context/SearchContext.jsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
+
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
   <StrictMode>

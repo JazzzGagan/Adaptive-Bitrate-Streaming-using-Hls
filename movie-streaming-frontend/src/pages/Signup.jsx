@@ -7,6 +7,7 @@ import minion from ".././assets/minion.jpg";
 import mandolarian from ".././assets/mandalorain.jpeg";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import avatarList from "../Utils/avatarList";
 
 const images = [sipderman, minion, mandolarian];
 const schema = yup.object().shape({
@@ -47,9 +48,18 @@ export default function SignupForm() {
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
 
+  const getRandomAvatar = () => {
+    const index = Math.floor(Math.random() * avatarList.length);
+    return avatarList[index];
+  };
+
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post("http://localhost:5000/signup", data);
+      const payload = {
+        ...data,
+        avatar: getRandomAvatar(),
+      };
+      const res = await axios.post("http://localhost:5000/signup", payload);
       setServerMessage(res.data.message);
       setServerError("");
       setTimeout(() => {
@@ -143,7 +153,6 @@ export default function SignupForm() {
                   placeholder="Date of Birth"
                   {...register("dob")}
                   className="w-full p-3 rounded bg-white bg-opacity-10 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#00acc1] border border-white border-opacity-20   appearance-none"
-                  
                 />
 
                 {errors.dob && (

@@ -7,23 +7,23 @@ import "slick-carousel/slick/slick-theme.css";
 const MovieSection = ({ title, movies }) => {
   const navigate = useNavigate();
   const settings = {
-    dots: true,
+    dots: false,
     speed: 500,
-    slidesToShow: Math.min(movies.length, 4),
-    slidesToScroll: Math.min(movies.length, 4),
-    infinite: true,
+    slidesToShow: Math.min(movies.length, 5),
+    slidesToScroll: 5,
+    infinite: movies.length > 6,
     autoplay: false,
     autoplaySpeed: 1000,
   };
   return (
-    <div className="my-0 px-6  cursor-pointer">
+    <div className=" px-6 cursor-pointer flex-grow   ">
       <h2 className="text-4xl pt-5 font-bold mb-4 text-white">{title}</h2>
 
       <Slider {...settings}>
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className="min-w-[170px] "
+            className="min-w-[190px]  px-6   "
             onClick={() =>
               navigate(
                 movie.media_type
@@ -35,11 +35,8 @@ const MovieSection = ({ title, movies }) => {
             <img
               src={movie.poster}
               alt={movie.title}
-              className="rounded-md w-[239px] h-4/5  object-cover shadow-md hover:scale-105 transition-transform"
+              className="rounded-xl w-[350px] h-[40vh]  object-cover shadow-md hover:scale-105 transition-transform"
             />
-            <p className="text-sm  w-[239px] text-center mt-2  text-white">
-              {movie.title}
-            </p>
           </div>
         ))}
       </Slider>

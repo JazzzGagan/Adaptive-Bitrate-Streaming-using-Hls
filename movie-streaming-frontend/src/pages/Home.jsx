@@ -6,7 +6,7 @@ import {
   fetchTopRatedMovies,
   fetchTrendingTVToday,
 } from "../api/tmdb";
-import MovieSection from "../components/MovieSection";
+import MovieSection from "../components/MovieSlider";
 import { useQuery } from "@tanstack/react-query";
 
 const Home = () => {
