@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { SearchContext } from "../context/Contexts";
-import MovieSection from "../components/MovieSlider";
+import MovieCard from "../components/MovieCard";
 
 const Search = () => {
   const { searchResult, hasSearched } = useContext(SearchContext);
@@ -23,7 +23,7 @@ const Search = () => {
       )}
 
       {hasResults && (
-        <MovieSection
+        <MovieCard
           title="Search Results"
           movies={searchResult.map((movie) => ({
             id: movie.id,

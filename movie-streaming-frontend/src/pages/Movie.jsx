@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlay,
@@ -23,6 +23,14 @@ const Movies = () => {
   const [showPlayer, setShowPlayer] = useState(false);
   const [expandedSeason, setExpandedSeason] = useState(1);
   const [seasonEpisodes, setSeasonEpisodes] = useState({});
+  const location = useLocation();
+  const progress = location.state?.progress || false;
+
+  useEffect(() => {
+    if (progress) {
+      setShowPlayer(true);
+    }
+  }, [progress]);
 
   useEffect(() => {
     setMovie(null);
@@ -48,8 +56,6 @@ const Movies = () => {
     fetchDetails();
   }, [id, type]);
 
-  const handleClick = () => setShowPlayer(true);
-  const handleClose = () => setShowPlayer(false);
   useEffect(() => {
     const fetchEpisodes = async () => {
       if (!seasonEpisodes[expandedSeason]) {
@@ -122,7 +128,7 @@ const Movies = () => {
 
           <button
             className="mt-6 bg-background2 px-6 py-2 rounded-full text-white font-semibold shadow-lg flex items-center gap-2"
-            onClick={handleClick}
+            onClick={() => setShowPlayer(true)}
           >
             <FontAwesomeIcon icon={faPlay} /> Play
           </button>
@@ -219,13 +225,13 @@ const Movies = () => {
       {showPlayer && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-[9999] flex items-center justify-center">
           <button
-            onClick={handleClose}
+            onClick={() => setShowPlayer(false)}
             className="absolute top-4 right-6 text-white text-3xl z-[10000]"
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
-          <div className="relative w-full max-w-5xl h-[70vh] z-[10001] p-4">
-            <Watch title={movie.title} />
+          <div className="relative w-full max-w-5xl h-[70vh] z-[10001]  p-4">
+            <Watch title={movie.title} movieId={id} />
           </div>
         </div>
       )}

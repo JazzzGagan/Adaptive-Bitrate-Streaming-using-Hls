@@ -374,7 +374,7 @@ def resetPassword():
         print(e)
         return jsonify({"message":"error occured"}), 400
     
-
+#update user profile
 @app.route('/updateprofile' , methods=["PUT"])
 def updateProfile():
     data = request.get_json()
@@ -401,7 +401,7 @@ def updateProfile():
         "avatar": updated_user.get("avatar"),
         "message": "Profile updated successfully"
     })
-   
+#updateusername 
 @app.route('/updateusername', methods=["PUT"])
 def updateUsername():
     data = request.get_json()
@@ -425,6 +425,56 @@ def updateUsername():
         "message": "Username updated successfully"
     }), 200
 
+#save videoplay progrees
+@app.route("/saveprogress", methods=["POST"])
+def saveProgress():
+    data = request.get_json()
+    userId = data['userId']
+    movieTitle = data["movieTitle"]
+    movieId = data["movieId"]
+    progress = data["progress"]
+    totalDuration = data["totalTime"]
+  
+    try:
+        obj_id  = ObjectId(userId)
+        user = db.users.find_one({"_id": obj_id})
+       
+    except InvalidId:
+        return jsonify({"message": "Invalid object id"}), 400
+   
+    if user :
+        db.watch_progress.update_one(
+            {"userId": userId, "movieId": movieId, "movieTitle": movieTitle, "totalDuration": totalDuration },
+            {"$set": {"progress": progress, "updatedAt": datetime.now(timezone.utc)} },
+            upsert = True
+        )
+        return jsonify({"message": "Progess saved "}), 200
+    else:
+        return jsonify({"message": "User not found"}), 404
+
+ #get watch progress   
+@app.route("/watchprogress", methods=["GET"])
+def getWatchProgress():
+    userId = request.args.get("userId")
+    try:
+        obj_id = ObjectId(userId)
+    except (InvalidId, TypeError):
+        return jsonify({"error": "Invalid userId"}), 400
+    
+    progressData = list(db.watch_progress.find({"userId": userId}).sort("updatedAt", -1))
+
+    results = [
+        {
+            "movieId" : item.get("movieId"),
+            "movieTitle": item.get("movieTitle"),
+            "progress": item.get("progress", 0),
+            "totalDuration": item.get("totalDuration", 0)
+        }
+        for item in progressData
+    ]
+
+    return(jsonify(results)), 200
+
 # Protected Route (Requires JWT Authentication)
 @app.route('/home', methods=["GET"])
 @jwt_required()
@@ -442,8 +492,6 @@ def protected():
         "email": user.get("email"),
         "avatar": user.get("avatar")
     })
-
-
 
 
 

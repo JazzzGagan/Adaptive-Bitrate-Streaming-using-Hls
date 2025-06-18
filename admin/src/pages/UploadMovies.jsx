@@ -20,8 +20,6 @@ const UploadMovies = () => {
   const [convertProgress, setConvertProgress] = useState(0)
   const [titleError, setTitleError] = useState('')
 
-  
-
   useEffect(() => {
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id)
@@ -131,7 +129,7 @@ const UploadMovies = () => {
                 {file && (
                   <div className="flex flex-col line-clamp-2 text-white">
                     <p>FileName: {file.name}</p>
-                    <p>Size: {(file.size / 1024).toFixed(2)} KB</p>
+                    <p>Size: {(file.size / (1024 * 1024)).toFixed(2)} MB</p>
                     <p>Type: {file.type}</p>
                   </div>
                 )}

@@ -1,15 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import {
   fetchMovies,
   fetchPopularMovies,
   fetchTopRatedMovies,
   fetchTrendingTVToday,
+  getContinueWatchingMovies,
 } from "../api/tmdb";
-import MovieSection from "../components/MovieSlider";
+import MovieCard from "../components/MovieCard";
 import { useQuery } from "@tanstack/react-query";
+import { AuthContext } from "../context/Contexts";
 
 const Home = () => {
+  const { userinfo } = useContext(AuthContext);
+
+  const { data: continueWatchingMovies = [] } = useQuery({
+    queryKey: ["continueWatching", userinfo?.user_id],
+    queryFn: () => getContinueWatchingMovies(userinfo?.user_id),
+    enabled: !!userinfo?.user_id,
+  });
+
   const { data: hotMovies = [] } = useQuery({
     queryKey: ["hotMovies"],
     queryFn: fetchMovies,
@@ -31,8 +41,22 @@ const Home = () => {
   });
 
   return (
-    <div className="w-[90%] mx-auto bg-black flex-grow-5 min-h-screen space-y-8 py-6">
-      <MovieSection
+    <div className="w-[90%] mx-auto min-h-screen  overflow-x-hidden space-y-8 py-6">
+      {continueWatchingMovies.length > 0 && (
+        <MovieCard
+          title="Continue Watching"
+          movies={continueWatchingMovies.map((movie) => ({
+            id: movie.id,
+            title: movie.title,
+            media_type: movie.media_type,
+            poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            progress: movie.progress,
+            totalDuration: movie.totalDuration,
+          }))}
+        />
+      )}
+
+      <MovieCard
         title="Today's Hot Movies"
         movies={hotMovies.map((movie) => ({
           id: movie.id,
@@ -41,7 +65,7 @@ const Home = () => {
           poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
         }))}
       />
-      <MovieSection
+      <MovieCard
         title="Popular Movies"
         movies={popularMovies.map((movie) => ({
           id: movie.id,
@@ -50,7 +74,7 @@ const Home = () => {
           poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
         }))}
       />
-      <MovieSection
+      <MovieCard
         title="Today's Hot TV Shows"
         movies={hotTvShows.map((movie) => ({
           id: movie.id,
@@ -59,7 +83,7 @@ const Home = () => {
           poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
         }))}
       />
-      <MovieSection
+      <MovieCard
         title="Top IMDB Rated Movies"
         movies={topRatedMovies.map((movie) => ({
           id: movie.id,
