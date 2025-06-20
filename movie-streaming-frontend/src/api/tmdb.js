@@ -17,6 +17,7 @@ export const getContinueWatchingMovies = async (userId) => {
       ...movieData,
       progress: item.progress,
       totalDuration: item.totalDuration,
+      completed: item.completed,
     };
   });
   return Promise.all(movieDetailPromises);

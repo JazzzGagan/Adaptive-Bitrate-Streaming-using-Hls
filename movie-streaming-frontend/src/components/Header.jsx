@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import NavData from "../Layout/NavData";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -35,36 +35,43 @@ const Header = () => {
   };
 
   return !isSearchActive ? (
-    <div className="w-full h-[8vh] sm:h-1/2 ">
-      <div className="w-[90%] h-[8vh]  text-white m-auto  space-y-4 sm:flex items-center justify-between sm:px-8 shadow-md relative">
+    <div className="w-full h-[8vh] sm:h-1/2 border-b-2 border-gray-500   ">
+      <div className="w-[90%] h-[8vh] bg-slate-200  text-white m-auto  space-y-4 sm:flex items-center justify-between sm:px-8 shadow-md relative">
         {/* Logo Section */}
         <div className=" flex items-center sm:space-x-2  ">
           <div className="text-yellow-50 font-bold text-xl">MovieMandu</div>
-          {/* <span className="bg-background2 text-black px-2 rounded text-sm">
-            PRO
-          </span> */}
+        
         </div>
 
-        <ul className="flex items-center space-x  sm:space-x-20 text-lg font-medium  ">
+        <ul className="w-[40%]  flex items-centr justify-evenly bg-slate-400    text-lg font-medium  ">
           {NavData.map((navdata) => (
             <li key={navdata.id}>
-              <Link
+              <NavLink
                 to={navdata.path}
-                className="hover:text-background2 transition"
+                className={({ isActive }) => {
+                  return (
+                    " py-5 px-12 font-helvetica w-1/3   " +
+                    (isActive
+                      ? "text-background2  border-b-4 border-background2"
+                      : "text-white")
+                  );
+                }}
               >
                 {navdata.title}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>
 
         <div className="flex items-center space-x-10 cursor-pointer ">
-          <img
-            onClick={toogleIcon}
-            src={isopen ? historyicon2 : historyicon}
-            alt="historyicon"
-            className="size-9"
-          />
+          <Link to={"/library"}>
+            <img
+              onClick={toogleIcon}
+              src={isopen ? historyicon2 : historyicon}
+              alt="historyicon"
+              className="size-9"
+            />
+          </Link>
 
           <FontAwesomeIcon
             icon={faSearch}

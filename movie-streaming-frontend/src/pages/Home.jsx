@@ -48,10 +48,11 @@ const Home = () => {
           movies={continueWatchingMovies.map((movie) => ({
             id: movie.id,
             title: movie.title,
-            media_type: movie.media_type,
+            media_type: movie.media_type || "movie",
             poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
             progress: movie.progress,
             totalDuration: movie.totalDuration,
+            completed: movie.completed,
           }))}
         />
       )}

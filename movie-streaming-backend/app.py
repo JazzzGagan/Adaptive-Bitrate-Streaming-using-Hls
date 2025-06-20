@@ -434,7 +434,11 @@ def saveProgress():
     movieId = data["movieId"]
     progress = data["progress"]
     totalDuration = data["totalTime"]
-  
+    completed = data["completed"]
+
+    print(data)
+
+
     try:
         obj_id  = ObjectId(userId)
         user = db.users.find_one({"_id": obj_id})
@@ -443,9 +447,22 @@ def saveProgress():
         return jsonify({"message": "Invalid object id"}), 400
    
     if user :
+        
         db.watch_progress.update_one(
-            {"userId": userId, "movieId": movieId, "movieTitle": movieTitle, "totalDuration": totalDuration },
-            {"$set": {"progress": progress, "updatedAt": datetime.now(timezone.utc)} },
+            {"userId": userId, "movieId": movieId, },
+            {
+                "$set": {
+                    "completed": completed,
+                    "progress": progress,
+                    "completed": completed,
+                    "updatedAt": datetime.now(timezone.utc)
+                    },
+                "$setOnInsert": {
+                    "movieTitle": movieTitle,
+                    "totalDuration": totalDuration ,
+                    "createdAt": datetime.now(timezone.utc)
+                } 
+            },
             upsert = True
         )
         return jsonify({"message": "Progess saved "}), 200
@@ -468,7 +485,8 @@ def getWatchProgress():
             "movieId" : item.get("movieId"),
             "movieTitle": item.get("movieTitle"),
             "progress": item.get("progress", 0),
-            "totalDuration": item.get("totalDuration", 0)
+            "totalDuration": item.get("totalDuration", 0),
+            "completed": item.get("completed")
         }
         for item in progressData
     ]

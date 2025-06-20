@@ -12,6 +12,7 @@ import LoginFrom from "./pages/Login";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile.jsx";
 import ManageProfile from "./pages/ManageProfile.jsx";
+import UserLibrary from "./pages/UserLibrary.jsx";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -35,6 +36,8 @@ function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/manageprofile" element={<ManageProfile />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/library" element={<UserLibrary />} />
+            <Route path="/movies" element={<Movies />} />
           </Route>
         </Route>
       </Routes>

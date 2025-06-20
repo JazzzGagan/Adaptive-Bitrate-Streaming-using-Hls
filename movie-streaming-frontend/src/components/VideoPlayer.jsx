@@ -63,12 +63,15 @@ const VideoPlayer = ({ options, initialOptions, title, movieId }) => {
         this.on("pause", () => {
           const currentTime = this.currentTime();
 
+          const isCompleted = currentTime >= totalDurationRef.current * 0.95;
+
           const payload = {
             userId: userinfo?.user_id,
             movieTitle: title || "Three Robots",
             movieId: movieId,
             progress: currentTime,
             totalTime: totalDurationRef.current,
+            completed: isCompleted,
           };
 
           axios

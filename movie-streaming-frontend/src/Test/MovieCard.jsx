@@ -19,12 +19,12 @@ const MovieCard = ({ title, movies }) => {
     autoplay: false,
     autoplaySpeed: 1000,
   };
-  console.log(movies);
+  console.log("movies", movies);
 
   return (
     <div className=" px-4 md:px-6 cursor-pointer bg-slate-400">
       <h2 className="text-4xl pt-5 font-bold mb-4 text-background2">{title}</h2>
-      <Slider {...settings} >
+      <Slider {...settings}>
         {movies.map((movie) => (
           <div
             key={movie.id}

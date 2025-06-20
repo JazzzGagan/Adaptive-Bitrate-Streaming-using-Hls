@@ -19,15 +19,20 @@ const MovieCard = ({ title, movies }) => {
     autoplay: false,
     autoplaySpeed: 1000,
   };
-  console.log("movieprogress", movies.progress);
-  console.log("movietotalduration", movies.totalDuration);
+
+  const filterMovies = movies.filter((movie) => movie.completed !== true);
 
   return (
     <div className="px-6 cursor-pointer flex-grow">
-      <h2 className="text-4xl pt-5 font-bold mb-4 text-background2">{title}</h2>
-      {movies.length < 5 ? (
+      {filterMovies.length > 0 && (
+        <h2 className="text-4xl pt-5 font-bold mb-4 text-background2">
+          {title}
+        </h2>
+      )}
+
+      {filterMovies.length < 5 ? (
         <div className="flex">
-          {movies.map((movie) => (
+          {filterMovies.map((movie) => (
             <div
               key={movie.id}
               className="w-[340px] relative  px-3 "
@@ -76,7 +81,7 @@ const MovieCard = ({ title, movies }) => {
         </div>
       ) : (
         <Slider {...settings}>
-          {movies.map((movie) => (
+          {filterMovies.map((movie) => (
             <div
               key={movie.id}
               className="min-w-[190px] relative  px-3 "
