@@ -6,10 +6,7 @@ import {
   fetchTopRatedMovies,
   fetchTrendingTVToday,
   getContinueWatchingMovies,
-<<<<<<< HEAD
-=======
   getRecommendedMovies,
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
 } from "../api/tmdb";
 import MovieCard from "../components/MovieCard";
 import { useQuery } from "@tanstack/react-query";
@@ -24,15 +21,12 @@ const Home = () => {
     enabled: !!userinfo?.user_id,
   });
 
-<<<<<<< HEAD
-=======
   const { data: recommendMovies = [] } = useQuery({
     queryKey: ["recommendMovies"],
     queryFn: () => getRecommendedMovies(userinfo?.user_id),
     enabled: !!userinfo?.user_id,
   });
 
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
   const { data: hotMovies = [] } = useQuery({
     queryKey: ["hotMovies"],
     queryFn: fetchMovies,
@@ -54,11 +48,7 @@ const Home = () => {
   });
 
   return (
-<<<<<<< HEAD
-    <div className="w-[90%] mx-auto min-h-screen  overflow-x-hidden space-y-8 py-6">
-=======
     <div className=" md:w-[90%] mx-auto min-h-screen mt-4 px-2 overflow-x-hidden md:space-y-8  md:py-6">
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
       {continueWatchingMovies.length > 0 && (
         <MovieCard
           title="Continue Watching"
@@ -75,8 +65,6 @@ const Home = () => {
       )}
 
       <MovieCard
-<<<<<<< HEAD
-=======
         title="Movies Might you Like"
         movies={recommendMovies.map((movie) => ({
           id: movie.id,
@@ -87,7 +75,6 @@ const Home = () => {
       />
 
       <MovieCard
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
         title="Today's Hot Movies"
         movies={hotMovies.map((movie) => ({
           id: movie.id,

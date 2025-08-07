@@ -10,10 +10,6 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [token, setToken] = useState(null);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
   useEffect(() => {
     const checkAuthStatus = () => {
       const token =
@@ -30,11 +26,7 @@ export const AuthProvider = ({ children }) => {
       return;
     }
     axios
-<<<<<<< HEAD
-      .get("http://127.0.0.1:5000/home", {
-=======
       .get(" http://127.0.0.1:5000/home", {
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

@@ -35,11 +35,7 @@ export default function LoginFrom() {
   const onSubmit = async (data) => {
     try {
       const res = await axios.post(
-<<<<<<< HEAD
-        "http://127.0.0.1:5000/login",
-=======
       " http://127.0.0.1:5000/login",
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
         { ...data },
         { withCredentials: true }
       );

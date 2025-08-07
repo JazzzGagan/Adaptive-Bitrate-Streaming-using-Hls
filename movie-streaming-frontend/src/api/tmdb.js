@@ -22,8 +22,6 @@ export const getContinueWatchingMovies = async (userId) => {
   });
   return Promise.all(movieDetailPromises);
 };
-<<<<<<< HEAD
-=======
 
 export const getRecommendedMovies = async (userId) => {
   const res = await fetch(`http://127.0.0.1:5000/recommend?userId=${userId}`);
@@ -41,7 +39,6 @@ export const getRecommendedMovies = async (userId) => {
   return movies;
 };
 
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
 export const fetchMovies = async () => {
   const res = await fetch(`${baseUrl}/trending/movie/day?api_key=${apiKey}`);
   const data = await res.json();

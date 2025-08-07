@@ -17,11 +17,7 @@ const Watch = ({ title, movieId }) => {
   const videoJsOptions = {
     sources: [
       {
-<<<<<<< HEAD
-        src: `http://127.0.0.1:9000/moviebox/Dune/master.m3u8`,
-=======
         src: `http://127.0.0.1:9000/moviebox/Three Robots/master.m3u8`,
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
         type: "application/x-mpegURL",
       },
     ],
@@ -34,12 +30,6 @@ const Watch = ({ title, movieId }) => {
         initialOptions={initialOptions}
         movieId={movieId}
         title={title}
-<<<<<<< HEAD
-=======
-        
-
-
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
       />
     </div>
   );

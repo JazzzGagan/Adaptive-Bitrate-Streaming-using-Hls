@@ -21,6 +21,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import pandas as pd
+import time
 
 
 
@@ -530,29 +531,37 @@ def getPopularMovieIds():
     if response.status_code == 200:
         data = response.json()
         movie_ids = [ movie["id"] for movie in data["results"]]
+        print("length movie" , len(movie_ids))
         return movie_ids
     else:
         return []
 
     
 def getTmdbMetaData(watch_movie_ids):
-    movies = []
+    cached_movies = []
     
     for movieId in watch_movie_ids:
-        
-        url = f'{TMDB_BASE_URL}{movieId}?api_key={TMDB_API_KEY}&language=en-US'
-        res = requests.get(url )
-        data = res.json()
+        movie = db.movie_cache.find_one({"id": movieId})
+        if movie:
+            cached_movies.append(movie)
+        else:
+            
+            url = f'{TMDB_BASE_URL}{movieId}?api_key={TMDB_API_KEY}&language=en-US'
+            res = requests.get(url )
+            data = res.json()
 
-        movies.append({
-            "id": data["id"],
-            "title": data['title'],
-            "overviews": data.get('overview', ''),
-            "genres": " ".join([g['name'] for g in data.get('genres', [])])
-        })
-    return movies
+            movie = {
+                "id": data["id"],
+                "title": data['title'],
+                "overviews": data.get('overview', ''),
+                "genres": " ".join([g['name'] for g in data.get('genres', [])])
+            }
+            db.movie_cache.insert_one(movie)
+            cached_movies.append(movie)
+    return cached_movies
 
 def computeRecommendations(watched_metadata, candidate_metadata):
+    
 
     def combineText(movie):
         return movie['overviews'] + " " + movie['genres']
@@ -590,6 +599,7 @@ def computeRecommendations(watched_metadata, candidate_metadata):
         recommendations[i]["similarity"] = float(sim_scores[idx])
     
     # print(recommendations)
+   
     return recommendations
 
     
@@ -597,6 +607,7 @@ def computeRecommendations(watched_metadata, candidate_metadata):
 #recommend Movies
 @app.route('/recommend', methods=["GET"])
 def recommend_movies():
+    start = time.time()
     user_id = request.args.get("userId")
     watch_movie_ids = getUserWatchedIds(user_id)
 
@@ -606,7 +617,8 @@ def recommend_movies():
   
     recommendation = computeRecommendations(watched_metadata, candidate_metadata)
 
-  
+    end = time.time()
+    print(f"Recommendation computed in {end - start:.2f} seconds")
     
     return jsonify(recommendation)
 

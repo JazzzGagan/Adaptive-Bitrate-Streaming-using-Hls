@@ -59,11 +59,7 @@ export default function SignupForm() {
         ...data,
         avatar: getRandomAvatar(),
       };
-<<<<<<< HEAD
-      const res = await axios.post("http://localhost:5000/signup", payload);
-=======
       const res = await axios.post("http://127.0.0.1:5000/signup", payload);
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
       setServerMessage(res.data.message);
       setServerError("");
       setTimeout(() => {

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState,  } from "react";
 import { searchByQuery } from "../api/movieServices";
 
 import { SearchContext } from "../context/Contexts";
@@ -29,7 +29,7 @@ const Input = ({ setIsSearchActive }) => {
     if (e.key == "Enter") {
       const query = inputValue.trim();
       console.log(query);
-      
+
       if (!query) return;
       setIsSearchActive(false);
 
@@ -69,15 +69,9 @@ const Input = ({ setIsSearchActive }) => {
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
         placeholder="Search item here"
-<<<<<<< HEAD
-        className="w-[80%] bg-black text-white h-12 text-lg px-4 z-[500] outline-none"
-      />
-      <div className=" w-[80%] h-auto flex space-x-4  absolute z-[1000] top-20">
-=======
         className="w-[80%] bg-black text-white h-12 text-base md:text-lg px-4 z-[500] outline-none"
       />
       <div className=" hidden  md:w-[80%] h-auto md:flex md:space-x-4 text-sm absolute z-[1000] top-20">
->>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
         {prevSearch &&
           prevSearch
             .slice()
