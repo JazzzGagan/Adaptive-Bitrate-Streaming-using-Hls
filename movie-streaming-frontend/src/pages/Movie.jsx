@@ -19,6 +19,11 @@ import {
 const Movies = () => {
   const { id, type } = useParams();
   const [movie, setMovie] = useState(null);
+<<<<<<< HEAD
+=======
+  console.log("movies", movie);
+
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
   const [trailer, setTrailer] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
   const [expandedSeason, setExpandedSeason] = useState(1);
@@ -211,7 +216,11 @@ const Movies = () => {
           <h2 className="text-2xl font-semibold mb-4">Trailer</h2>
           <div className="w-full aspect-video">
             <iframe
+<<<<<<< HEAD
               src={`https://www.youtube.com/embed/${trailer.key}`}
+=======
+              src={`https://www.youtube-nocookie.com/embed/${trailer.key}?autoplay=0&rel=0&modestbranding=1`}
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
               className="w-full h-full rounded-lg"
               frameBorder="0"
               allowFullScreen
@@ -220,7 +229,10 @@ const Movies = () => {
           </div>
         </div>
       )}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
       {/* PLAYER OVERLAY */}
       {showPlayer && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-[9999] flex items-center justify-center">

@@ -28,3 +28,6 @@ static/
 
 # Template cache
 templates/__pycache__/
+
+uploads/
+*.mp4

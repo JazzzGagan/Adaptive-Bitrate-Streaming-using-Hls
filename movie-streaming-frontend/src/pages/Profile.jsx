@@ -10,7 +10,11 @@ function Profile() {
   const navigate = useNavigate();
 
   const [selectedAvatar, setSelectedAvatar] = useState(null);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
   const handleSelect = (avatar) => {
     setSelectedAvatar(avatar);
   };
@@ -23,7 +27,11 @@ function Profile() {
     };
     try {
       const res = await axios.put(
+<<<<<<< HEAD
         "http://127.0.0.1:5000/updateprofile",
+=======
+        "http://192.168.101.5:5000/updateprofile",
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
         payload
       );
       setUserinfo(res.data);
@@ -41,12 +49,20 @@ function Profile() {
     <div className="w-full h-auto bg-slate-black flex items-center justify-center bg-black">
       <div className="w-[80%] h-auto  ">
         <div className="w-full h-[10vh] flex items-center">
+<<<<<<< HEAD
           <h1 className="font-helvetica text-6xl font-bold text-background2 ">
+=======
+          <h1 className="font-helvetica text-3xl md:text-6xl font-bold text-background2 ">
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
             Select an avatar
           </h1>
         </div>
 
+<<<<<<< HEAD
         <div className="w-full h-auto  grid grid-cols-8 gap-4 cursor-pointer ">
+=======
+        <div className="w-full h-auto  grid grid-cols-4 md:grid-cols-8 gap-4 cursor-pointer ">
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
           {avatarList.map((avatar, index) => (
             <div key={index} className="flex items-center  ">
               <img

@@ -16,6 +16,11 @@ import secrets
 import hashlib
 from werkzeug.utils import secure_filename
 import mimetypes
+import requests
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+import pandas as pd
 
 
 
@@ -28,7 +33,7 @@ app = Flask(__name__)
 CORS(app, supports_credentials=True, origins=[
     "http://127.0.0.1:5173",
     "http://localhost:5175",
-    "http://192.168.101.4:5175"
+    "http://192.168.101.7:5175"
 ])
 
 socketio = SocketIO(
@@ -37,7 +42,7 @@ socketio = SocketIO(
     cors_allowed_origins=[
         "http://127.0.0.1:5173",
         "http://localhost:5175",
-        "http://192.168.101.4:5175"
+        "http://192.168.101.7:5175"
     ]
 )
 
@@ -55,11 +60,18 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
 app.config["MONGO_URI"] = os.getenv('MONGO_URI')
 
+
 # Initializing Database and JWT Manager
 
 mongo = PyMongo(app)
 db = mongo.db
 jwt = JWTManager(app)
+
+#TMDB
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
+TMDB_BASE_URL = os.getenv("TMDB_BASE_URL")
+
+
 
 MINIO_URL = os.getenv("MINIO_URL")
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
@@ -118,8 +130,6 @@ def upload_video_folder():
 
     videoUrl = f"http://127.0.0.1:9000/{MINIO_BUCKET_NAME}/{title}/master.m3u8"
    
-    
-
     db.movies.insert_one({
         "title": title,
         "hls_url": videoUrl,
@@ -127,8 +137,6 @@ def upload_video_folder():
     })
 
     return jsonify({"message": "folder uploaded", "url": videoUrl})   
-
-
 
 def ffmpeg_task(command, title, upload_path, hls_output_dir):
     ff = FfmpegProgress(command)
@@ -172,9 +180,7 @@ def ffmpeg_task(command, title, upload_path, hls_output_dir):
         })
     except Exception as e:
         print(f"failed to save to db {videoUrl}")
-
-
-
+    
     socketio.emit('conversion_completed', {'message': f'Conversion for "{title}" completed.', 'url': videoUrl})
 
         
@@ -199,11 +205,7 @@ def convert_video():
     for quality in ['1080p', '720p', '360p']:
         os.makedirs(os.path.join(hls_output_dir, quality), exist_ok=True)
 
-   
-   
     socketio.emit('upload_complete', {'message': 'File upload complete', 'filename': filename})
-   
-    
    
     command = [
     "ffmpeg", "-i", upload_path,
@@ -229,10 +231,6 @@ def convert_video():
     "-master_pl_name", "master.m3u8",
    f"{hls_output_dir}/stream_%v/playlist.m3u8"
 ]
-
-
-
-    
 
     socketio.start_background_task(ffmpeg_task, command, title, upload_path, hls_output_dir)
 
@@ -511,12 +509,111 @@ def protected():
         "avatar": user.get("avatar")
     })
 
+def getUserWatchedIds(user_id):
+    try:
+       results = db.watch_progress.find(
+           {"userId": user_id},
+           {"movieId": 1, "_id":0}
+       )
 
+       movie_ids = [doc["movieId"] for doc in results]
+       
+       return movie_ids
+       
+    except Exception as e:
+        return []
+    
+def getPopularMovieIds():
+    url = f'{TMDB_BASE_URL}popular?api_key={TMDB_API_KEY}&language=en-US&page=1'
+    response = requests.get(url)
 
+    if response.status_code == 200:
+        data = response.json()
+        movie_ids = [ movie["id"] for movie in data["results"]]
+        return movie_ids
+    else:
+        return []
+
+    
+def getTmdbMetaData(watch_movie_ids):
+    movies = []
+    
+    for movieId in watch_movie_ids:
+        
+        url = f'{TMDB_BASE_URL}{movieId}?api_key={TMDB_API_KEY}&language=en-US'
+        res = requests.get(url )
+        data = res.json()
+
+        movies.append({
+            "id": data["id"],
+            "title": data['title'],
+            "overviews": data.get('overview', ''),
+            "genres": " ".join([g['name'] for g in data.get('genres', [])])
+        })
+    return movies
+
+def computeRecommendations(watched_metadata, candidate_metadata):
+
+    def combineText(movie):
+        return movie['overviews'] + " " + movie['genres']
+    
+    watched_Text = [combineText(movie) for movie in watched_metadata]
+    candidate_Text = [combineText(movie) for movie in candidate_metadata]
+
+    all_texts = watched_Text + candidate_Text
+
+    vectorizer = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = vectorizer.fit_transform(all_texts)
+
+    n_watched = len(watched_Text)
+    watched_vectors = tfidf_matrix[:n_watched]
+    candidate_vectors = tfidf_matrix[n_watched:]
+
+    similarity_matrix = cosine_similarity(watched_vectors, candidate_vectors)
+
+    df_similarity = pd.DataFrame(
+        similarity_matrix,
+        index = [m["title"] for m in watched_metadata],
+        columns = [m["title"] for m in candidate_metadata]
+    )
+
+    # print("cosine similarity matrix: ")
+    # print(df_similarity)
+    
+    sim_scores = similarity_matrix.max(axis = 1)
+    top_n = 10
+    top_indices = np.argsort(sim_scores)[::-1][:top_n]
+
+    recommendations = [candidate_metadata[i] for i in top_indices]
+
+    for i, idx  in enumerate(top_indices):
+        recommendations[i]["similarity"] = float(sim_scores[idx])
+    
+    # print(recommendations)
+    return recommendations
+
+    
+
+#recommend Movies
+@app.route('/recommend', methods=["GET"])
+def recommend_movies():
+    user_id = request.args.get("userId")
+    watch_movie_ids = getUserWatchedIds(user_id)
+
+    watched_metadata = getTmdbMetaData(watch_movie_ids)
+    candidate_metadata = getTmdbMetaData(getPopularMovieIds())
+
+  
+    recommendation = computeRecommendations(watched_metadata, candidate_metadata)
+
+  
+    
+    return jsonify(recommendation)
 
 # Run the Flask Application
 if __name__ == "__main__":
     socketio.run(app, port=5000, debug=True)
+
   
 
  

@@ -1,8 +1,23 @@
 // components/Avatar.jsx
 import React, { useState } from "react";
+<<<<<<< HEAD
 import multiavatar from "@multiavatar/multiavatar"
 
 const usernames = ["alice", "bob", "charlie", "dave", "emma", "frank", "hero", "elon"];
+=======
+import multiavatar from "@multiavatar/multiavatar";
+
+const usernames = [
+  "alice",
+  "bob",
+  "charlie",
+  "dave",
+  "emma",
+  "frank",
+  "hero",
+  "elon",
+];
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
 
 export default function Avatar({ onSelect }) {
   const [selected, setSelected] = useState(null);

@@ -22,7 +22,11 @@ const MovieCard = ({ title, movies }) => {
   console.log("movies", movies);
 
   return (
+<<<<<<< HEAD
     <div className=" px-4 md:px-6 cursor-pointer bg-slate-400">
+=======
+    <div className=" px-4 md:px-6 cursor-pointer ">
+>>>>>>> 9c939ad (Recommend movies using tf-idf vector spacing method and find movie similarity using cosine)
       <h2 className="text-4xl pt-5 font-bold mb-4 text-background2">{title}</h2>
       <Slider {...settings}>
         {movies.map((movie) => (
